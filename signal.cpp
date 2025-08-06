@@ -99,9 +99,10 @@ int main() {
     signalGain(samplesL,0.5);
     signalGain(samplesR,0.5);
 
-    std::vector<float> baseline;
-    baseline = signalAdd(baseline, signalSin(0.5,10,5,44100,1),44100);
-    baseline = signalAdd(baseline, signalSin(1,12,3,44100,1),44100,5);
+    std::vector<float> baseline = ADSR(2.7,44100,0.5,0.8,1.7, 0.16, 0.7,58,63,88,82);
+    
+    //baseline = signalAdd(baseline, signalSin(0.5,10,5,44100,1),44100);
+    //baseline = signalAdd(baseline, signalSin(1,12,3,44100,1),44100,5);
 
     write_csv(baseline,1,44100,baseline.size());
     
