@@ -5,12 +5,12 @@
 #include "signal_generator.h"
 #include "signal_controller.h"
 
-#define DSR 44100
-
 #include <iostream>
 #include <vector>
 #include <fstream>
 #include <cstdlib>
+
+#define DSR 44100
 
 void writeCsv (const std::vector<float> &samples, int channels, int sampleRate, int totalPCMFrameCount) {
     std::ofstream csv("waveform.csv");
@@ -94,11 +94,13 @@ int main() {
     //char* filename = "hello.wav";
     //std::vector<float> baseline = importWav(filename);
 
-    std::vector <float> baseline = signalSquare(1,10,2,DSR);
+    std::vector<float> baseline = signalSin(1,216,1,DSR);
+    signalNormalize(baseline, 0.8);
+
     exportWav(baseline);
     writeCsv(baseline,1,44100,baseline.size());
 
-    int ret = std::system("waveform.py");
+    int plot = std::system("waveform.py");
   
     return 0;
 }
