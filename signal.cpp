@@ -3,13 +3,17 @@
 #include "dr_wav.h"
 #include "signal_complex.h"
 #include "signal_generator.h"
+#include "signal_controller.h"
+
+#define DSR 44100
 
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <cstdlib>
 
-void write_csv (const std::vector<float> &samples, int channels, int sampleRate, int totalPCMFrameCount) {
-    std::ofstream csv("audio_samples.csv");
+void writeCsv (const std::vector<float> &samples, int channels, int sampleRate, int totalPCMFrameCount) {
+    std::ofstream csv("waveform.csv");
     if (!csv) {
         std::cout << "Failed to write CSV file.\n";
         return;
@@ -26,85 +30,75 @@ void write_csv (const std::vector<float> &samples, int channels, int sampleRate,
     csv.close();
 }
 
-int main() {
+void exportWav(std::vector <float> &baseline) {
 
-    const char* filename = "hello.wav";
+    drwav_data_format format;
+    format.container     = drwav_container_riff;
+    format.format        = DR_WAVE_FORMAT_IEEE_FLOAT;  
+    format.channels      = 1;                         
+    format.sampleRate    = 44100;
+    format.bitsPerSample = 32;                  
+    drwav out;
+    if (!drwav_init_file_write(&out, "baseline.wav", &format, nullptr)) {
+        std::cout << "Failed to create baseline.wav\n";
+        return;
+    }
+    drwav_uint64 framesWritten = drwav_write_pcm_frames(&out, baseline.size(), baseline.data());
+    drwav_uninit(&out);
+
+}
+
+std::vector<float> importWav(const std::string& filename) {
     drwav wav;
-    bool read = drwav_init_file(&wav, filename, nullptr);
-
-    if (!read) {
-        std::cout << "failed to open .wav file\n";
-        return 1;
+    if (!drwav_init_file(&wav, filename.c_str(), nullptr)) {
+        std::cerr << "Failed to open WAV file: " << filename << std::endl;
+        return {};
     }
 
-    std::cout << "===============FILE INFO===============\n";
-    std::cout << "Channels : "<< wav.channels << "\n";
-    std::cout << "Sample Rate : " << wav.sampleRate << "Hz \n";
-    std::cout << "Bits per sample " << wav.bitsPerSample << "\n";
-    std::cout << "Total PCM Frame count " << wav.totalPCMFrameCount << "\n";
+    std::cout << "FILE INFO\n";
+    std::cout << "Channels: " << wav.channels << "\n";
+    std::cout << "Sample Rate: " << wav.sampleRate << " Hz\n";
+    std::cout << "Bits per Sample: " << wav.bitsPerSample << "\n";
+    std::cout << "Total PCM Frame Count: " << wav.totalPCMFrameCount << "\n";
 
-
-    // allocate buffer for audio samples
-    //samples.data() is a raw pointer to the first element the allocated buffer
-    //drwav_read_pcm_frames_f32 reads and normalises the values between -1 and 1 for 16 bit PCM and 0 and 1 for 8 bit unsigned PCM
-
-    bool STEREO = (wav.channels == 2 ? 1 : 0);
     int channels = wav.channels;
-    int sampleRate = wav.sampleRate;
-    int bitsPerSample = wav.bitsPerSample;
-    int totalPCMFrameCount = wav.totalPCMFrameCount;
+    int totalFrames = wav.totalPCMFrameCount;
 
-    std::vector<float> samples(wav.totalPCMFrameCount * wav.channels);
-    drwav_read_pcm_frames_f32(&wav, wav.totalPCMFrameCount, samples.data());
+    std::vector<float> samples(totalFrames * channels);
+    drwav_read_pcm_frames_f32(&wav, totalFrames, samples.data());
+    drwav_uninit(&wav);
 
-    //take the samples from the wav files and create a complex sample vector that has real component as sample and
-    //imaginary component initialized to zero
+    std::vector<float> monoSamples(totalFrames);
 
-    std::vector<Complex> samplesComplex(samples.size());
-
-    for(int i = 0; i < samples.size(); i++) {
-        samplesComplex[i].real = samples[i];
-        samplesComplex[i].imaginary = 0; 
+    if (channels == 1) {
+       
+        monoSamples = samples;
     }
-
-    std::vector<float> samplesL;
-    std::vector<float> samplesR;
-
-    //sample vectors - samples, samplesComplex, samplesL, samplesR
-    //samplesL and samplesR contain Left channel and Right channel samples respectively for stereo file types
-
-    if(STEREO) {
+    else {
         
-        for(int i  = 0; i < wav.totalPCMFrameCount; i++) {
-            samplesL.push_back(samples[i*wav.channels + 0]);
-            samplesR.push_back(samples[i*wav.channels + 1]);
+        for (int i = 0; i < totalFrames; ++i) {
+            float sum = 0.0;
+            for (int c = 0; c < channels; ++c) {
+                sum += samples[i * channels + c];
+            }
+            monoSamples[i] = sum / channels;
         }
     }
 
-    //TODO : split channels and create corresponding complex sample vectors
-    //TODO : scale down the WAV 
+    return monoSamples;
+}
 
-    drwav_uninit(&wav);
 
-    std::cout << "===============WAV FILE LOADED===============\n";
+int main() {
 
-    std::cout << "read " << samples.size() << " total samples\n";
+    //char* filename = "hello.wav";
+    //std::vector<float> baseline = importWav(filename);
 
-    if(STEREO) {
-        std::cout << "read " << samplesL.size() << " L channel samples\n";
-        std::cout << "read " << samplesR.size() << " R channel samples\n";
-    }
+    std::vector <float> baseline = signalSquare(1,10,2,DSR);
+    exportWav(baseline);
+    writeCsv(baseline,1,44100,baseline.size());
 
-    signalGain(samples,0.5);
-    signalGain(samplesL,0.5);
-    signalGain(samplesR,0.5);
-
-    std::vector<float> baseline = ADSR(2.7,44100,0.5,0.8,1.7, 0.16, 0.7,58,63,88,82);
-    
-    //baseline = signalAdd(baseline, signalSin(0.5,10,5,44100,1),44100);
-    //baseline = signalAdd(baseline, signalSin(1,12,3,44100,1),44100,5);
-
-    write_csv(baseline,1,44100,baseline.size());
-    
+    int ret = std::system("waveform.py");
+  
     return 0;
 }

@@ -1,0 +1,28 @@
+/*
+    float dur = 2.0;
+    int sr = 44100;
+
+    std::vector<float> chord1 = signalSin(0.5, 174, dur, sr, 1);
+    chord1 = signalAdd(chord1, signalSin(0.5, 207, dur, sr, 1), sr);
+    chord1 = signalAdd(chord1, signalSin(0.5, 261, dur, sr, 1), sr);
+
+    std::vector<float> chord2 = signalSin(0.5, 277, dur, sr, 1);
+    chord2 = signalAdd(chord2, signalSin(0.5, 349, dur, sr, 1), sr);
+    chord2 = signalAdd(chord2, signalSin(0.5, 415, dur, sr, 1), sr);
+
+    std::vector<float> chord3 = signalSin(0.5, 207, dur, sr, 1);
+    chord3 = signalAdd(chord3, signalSin(0.5, 261, dur, sr, 1), sr);
+    chord3 = signalAdd(chord3, signalSin(0.5, 311, dur, sr, 1), sr);
+
+    std::vector<float> chord4 = signalSin(0.5, 155, dur, sr, 1);
+    chord4 = signalAdd(chord4, signalSin(0.5, 196, dur, sr, 1), sr);
+    chord4 = signalAdd(chord4, signalSin(0.5, 233, dur, sr, 1), sr);
+
+    baseline.insert(baseline.end(), chord1.begin(), chord1.end());
+    baseline.insert(baseline.end(), chord2.begin(), chord2.end());
+    baseline.insert(baseline.end(), chord3.begin(), chord3.end());
+    baseline.insert(baseline.end(), chord4.begin(), chord4.end());
+
+    std::vector<float> env = ADSR(8,44100,0.5,0.8,1.7, 0.16, 0.7,58,63,88,82);
+    signalEnvelope(baseline,env);
+    */
