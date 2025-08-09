@@ -52,7 +52,7 @@ std::vector<float> signalSawtooth(float frequency, float sampleRate, float time)
     return signal;
 }
 
-std::vector<float> signalAdd (std::vector<float>a, std::vector<float>b, int sampleRate, float time = 0) {
+std::vector<float> signalAdd (std::vector<float>const &a, std::vector<float>const &b, int sampleRate, float time = 0) {
 
     int buffer = static_cast<int>(time*sampleRate);
 

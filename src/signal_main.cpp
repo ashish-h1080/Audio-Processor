@@ -6,7 +6,6 @@
 #include "signal/signal_controller.h"
 #include "midifile/MidiFile.h"
 
-
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -15,7 +14,7 @@
 #define DSR 44100
 
 void writeCsv (const std::vector<float> &samples, int channels, int sampleRate, int totalPCMFrameCount) {
-    std::ofstream csv("waveform.csv");
+    std::ofstream csv("assets/waveform.csv");
     if (!csv) {
         std::cout << "Failed to write CSV file.\n";
         return;
@@ -41,7 +40,7 @@ void exportWav(std::vector <float> &baseline) {
     format.sampleRate    = 44100;
     format.bitsPerSample = 32;                  
     drwav out;
-    if (!drwav_init_file_write(&out, "baseline.wav", &format, nullptr)) {
+    if (!drwav_init_file_write(&out, "assets/baseline.wav", &format, nullptr)) {
         std::cout << "Failed to create baseline.wav\n";
         return;
     }
@@ -93,16 +92,18 @@ std::vector<float> importWav(const std::string& filename) {
 
 int main() {
 
-    //char* filename = "hello.wav";
+    //char* filename = "assets/hello.wav";
     //std::vector<float> baseline = importWav(filename);
 
     std::vector<float> baseline = signalSin(1,216,1,DSR);
+    baseline = signalAdd(baseline, signalSin(1,270,1,DSR), DSR,0);
+
     signalNormalize(baseline, 0.8);
 
     exportWav(baseline);
     writeCsv(baseline,1,44100,baseline.size());
 
-    int plot = std::system("waveform.py");
+    std::system("python assets/waveform.py");
   
     return 0;
 }
