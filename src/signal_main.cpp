@@ -1,9 +1,11 @@
 #define DR_WAV_IMPLEMENTATION
 
 #include "dr_wav.h"
-#include "signal_complex.h"
-#include "signal_generator.h"
-#include "signal_controller.h"
+#include "signal/signal_complex.h"
+#include "signal/signal_generator.h"
+#include "signal/signal_controller.h"
+#include "midifile/MidiFile.h"
+
 
 #include <iostream>
 #include <vector>
