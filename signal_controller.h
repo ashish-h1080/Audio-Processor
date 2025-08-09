@@ -42,7 +42,7 @@ void signalEnvelope (std::vector<float> &sample, std::vector<float> &envelope) {
     }
 }
 
-std::vector<float> ADSR (float time, float sampleRate, float aCurvature, float aMagnitude, float dCurvature, float dMagnitude,float rCurvature, float A, float D, float S, float R) {
+std::vector<float> signalADSR (float time, float sampleRate, float aCurvature, float aMagnitude, float dCurvature, float dMagnitude,float rCurvature, float A, float D, float S, float R) {
 
     std::vector <float> signal;
 

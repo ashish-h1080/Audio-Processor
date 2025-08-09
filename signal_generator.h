@@ -70,4 +70,15 @@ std::vector<float> signalAdd (std::vector<float>a, std::vector<float>b, int samp
     return result;
 }
 
+std::vector <float> signalJoin (std::vector <float>a, std::vector<float>b, int sampleRate){
+    std::vector <float> result;
+    for(float i : a) {
+        result.push_back(i);
+    }
+
+    for(float i : b) {
+        result.push_back(i);
+    }
+}
+
 #endif
