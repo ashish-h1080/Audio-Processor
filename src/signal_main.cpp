@@ -102,8 +102,9 @@ int main() {
 
     const char* file = "assets/test.mid";
     std::vector<Track> T1 = getTracks(file);
-    std::vector<float> baseline(44100*16,0);
+    std::vector<float> baseline(44100*18,0);
     synthMain(T1[1],baseline);
+
     exportWav(baseline);
     writeCsv(baseline,1,44100,baseline.size());
 
