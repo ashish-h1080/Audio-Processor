@@ -7,7 +7,7 @@
 
 #define PI acos(-1)
 
-std::vector<float> signalSin(float amplitude, float frequency, float time, int sampleRate) {
+std::vector<float> signalSine(float amplitude, float frequency, float time, int sampleRate) {
 
     std::vector<float> signal;
 

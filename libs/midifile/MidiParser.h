@@ -1,6 +1,8 @@
 #pragma once
+#ifndef MIDIPARSER_H
+#define MIDIPARSER_H
+
 #include <vector>
-#include "MidiFile.h"
 
 struct Note {
     float startTime;
@@ -15,3 +17,5 @@ struct Track {
 };
 
 std::vector<Track> getTracks(const char* filename);
+
+#endif

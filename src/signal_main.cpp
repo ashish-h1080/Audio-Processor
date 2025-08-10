@@ -4,7 +4,9 @@
 #include "signal/signal_complex.h"
 #include "signal/signal_generator.h"
 #include "signal/signal_controller.h"
+#include "signal/signal_synth.h"
 #include "midifile/MidiFile.h"
+#include "midifile/MidiParser.h"
 
 #include <iostream>
 #include <vector>
@@ -90,16 +92,18 @@ std::vector<float> importWav(const std::string& filename) {
 }
 
 
+
 int main() {
 
     //char* filename = "assets/hello.wav";
     //std::vector<float> baseline = importWav(filename);
+    //baseline = signalAdd(baseline, signalSin(1,270,1,DSR), DSR,0);
+    //signalNormalize(baseline, 0.8);
 
-    std::vector<float> baseline = signalSin(1,216,1,DSR);
-    baseline = signalAdd(baseline, signalSin(1,270,1,DSR), DSR,0);
-
-    signalNormalize(baseline, 0.8);
-
+    const char* file = "assets/test.mid";
+    std::vector<Track> T1 = getTracks(file);
+    std::vector<float> baseline(44100*16,0);
+    synthMain(T1[1],baseline);
     exportWav(baseline);
     writeCsv(baseline,1,44100,baseline.size());
 

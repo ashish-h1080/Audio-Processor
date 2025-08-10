@@ -59,9 +59,9 @@ std::vector <Track> getTracks(const char* filename) {
 
     //debug printing
 
-    std::cout << "read:" << filename << ".mid\n";
-    std::cout << "read:" << totalTracks << " tracks\n";
-    std::cout << "read:" << totalNotes << " notes\n";
+    std::cout << "read: " << filename << ".mid\n";
+    std::cout << "read: " << totalTracks << " tracks\n";
+    std::cout << "read: " << totalNotes << " notes\n";
     
     return tracks;
 }

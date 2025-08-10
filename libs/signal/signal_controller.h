@@ -14,10 +14,10 @@ void signalGain (std::vector<float> &sample, float gain) {
     }
 }
 
-void signalNormalize (std::vector<float>& signal, float amplitude) {
+void signalNormalize (std::vector<float>& signal) {
     float maxAmp = 0.0;
 
-    for (float sample : signal) {
+    for (auto& sample : signal) {
         float absSample = std::abs(sample);
         if (absSample > maxAmp) {
             maxAmp = absSample;
@@ -28,10 +28,10 @@ void signalNormalize (std::vector<float>& signal, float amplitude) {
         return;
     }
 
-    for (float sample : signal) {
+    for (auto& sample : signal) {
         sample /= maxAmp;
     }
-    signalGain(signal, amplitude);
+    
 }
 
 void signalEnvelope (std::vector<float> &sample, std::vector<float> &envelope) {
